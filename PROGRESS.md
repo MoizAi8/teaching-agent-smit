@@ -21,6 +21,11 @@ Wait for `SAVED` before live-provider checks or further implementation, as reque
 
 ## Remaining milestones
 
+### Final release QA
+
+- 216 scenarios passed on each engine run, with 126 release integration cases exercised on a temporary PostgreSQL 17 cluster. TypeScript and production build passed. Mocked provider coverage consumed no live Gemini quota.
+- Fixed deleted-result replay, progress/deletion concurrency, incorrect acceptance of resource URL suffixes, and blank quiz options, prompts and explanations. The approved interface design remains in place.
+
 ### Production release update
 
 - Deployed application commit `da18dd8e4d5cd022bfd6286701efc15dd1760a78` to https://teaching-agent-smit-livid.vercel.app with dedicated Neon Free PostgreSQL.

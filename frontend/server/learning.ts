@@ -25,7 +25,11 @@ export async function learn(user:string,input:z.infer<typeof aiInput>) {
     const previous=(await db.query("SELECT * FROM jobs WHERE user_id=? AND request_id=?",[user,input.requestId]))[0];
     if(previous) {
       if(previous.fingerprint!==fingerprint) throw new AppError(409,"request_conflict","This request ID was already used for different content.");
-      if(previous.status==="complete") return JSON.parse(previous.result);
+      if(previous.status==="complete") {
+        const result=JSON.parse(previous.result);
+        await owned(user,result.id,db);
+        return result;
+      }
       throw new AppError(409,"request_conflict","This request is pending or failed. Retry with a new request ID.");
     }
     if(input.conversationId) { const c=await owned(user,input.conversationId,db); if(c.kind!=="conversation") throw new AppError(400,"resource_type","Choose a conversation."); }

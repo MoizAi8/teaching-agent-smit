@@ -1,5 +1,15 @@
 # Verification — 2026-11-26
 
+## Final QA regression
+
+- 216 distinct automated scenarios passed with the expanded integration suite on SQLite. All 216 passed again with 126 integration cases switched to a separate PostgreSQL 17 database. These are two engine runs of the same scenario matrix.
+- The temporary PostgreSQL cluster used loopback and synthetic accounts. Verified composite foreign keys for messages, attempts and bookmarks, email uniqueness, rollback, repeat-safe migration after reconnect, cross-user API isolation, and 16 parallel reservations with exactly three accepted.
+- Mocked Gemini verified routing, persistence, retrieval inputs, duplicate single-call behavior, deleted-resource replay denial, provider failures, quota rollback and structured outputs. Automated regression consumed zero live AI requests.
+- The release candidate fixes resource path suffix handling, deletion racing with progress updates, replay of deleted AI results, and whitespace-only quiz fields.
+- Run `npm test` from `frontend/` for SQLite. To exercise PostgreSQL, start a disposable local cluster and create database `smit_release_qa` with user `smit_qa`, then set `SMIT_QA_POSTGRES_URL` for the test process. The test harness rejects other database names, users and non-loopback hosts. Keep credentials outside source control.
+
+## Earlier verification
+
 - TypeScript check: PASS.
 - Automated test runner: 14 passed, 0 failed, isolated SQLite. Includes multiple assertions for session persistence, two-user isolation, composite FK integrity, rollback, repeat-safe migration, concurrent quota reservation, origin validation, protected administration, quiz answer concealment/scoring, document type validation and input boundaries. This is not 250–300 tests.
 - Production build: PASS before final documentation checkpoint; repeat result recorded in PROGRESS.

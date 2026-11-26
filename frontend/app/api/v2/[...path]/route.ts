@@ -55,11 +55,17 @@ async function handle(req:Request,ctx:{params:Promise<{path:string[]}>}) {
       const offset=z.coerce.number().int().min(0).max(100000).parse(url.searchParams.get("offset")||0);
       return json(await query(`SELECT id,kind,title,created_at,updated_at FROM resources WHERE user_id=? ${kind?"AND kind=?":""} ORDER BY updated_at DESC LIMIT 50 OFFSET ?`,[user.id,...(kind?[kind]:[]),offset]));
     }
-    if(path.startsWith("resources/")) {
+    if(params.path[0]==="resources"&&params.path.length===2) {
       const id=idSchema.parse(params.path[1]),row=await owned(user.id,id);
       if(method==="GET") return json({...visibleResource(row),messages:row.kind==="conversation"?await query("SELECT id,role,content,created_at FROM messages WHERE resource_id=? AND user_id=? ORDER BY created_at,id LIMIT 200",[id,user.id]):[]});
       if(method==="PATCH") { const input=z.object({title:z.string().trim().min(1).max(150)}).parse(await body(req));await query("UPDATE resources SET title=?,updated_at=? WHERE id=? AND user_id=?",[input.title,now(),id,user.id]);return json({ok:true}); }
-      if(method==="DELETE") { await transaction(async db=>{await db.query("DELETE FROM progress WHERE user_id=? AND (target=? OR target LIKE ?)",[user.id,id,`${id}:%`]); await db.query("DELETE FROM resources WHERE id=? AND user_id=?",[id,user.id]);});return json({ok:true}); }
+      if(method==="DELETE") {
+        await transaction(async db=>{
+          await db.query("DELETE FROM resources WHERE id=? AND user_id=?",[id,user.id]);
+          await db.query("DELETE FROM progress WHERE user_id=? AND (target=? OR target LIKE ?)",[user.id,id,`${id}:%`]);
+        });
+        return json({ok:true});
+      }
     }
     if(path==="documents"&&method==="POST") {
       await rateLimit(`documents:${user.id}`,20,86400000);
@@ -78,11 +84,18 @@ async function handle(req:Request,ctx:{params:Promise<{path:string[]}>}) {
     if(path==="progress"&&method==="GET") return json(await query("SELECT target,completed_at FROM progress WHERE user_id=?",[user.id]));
     if(path==="progress"&&method==="POST") {
       const input=z.object({id:idSchema,stage:z.number().int().min(0).max(11).optional(),completed:z.boolean()}).parse(await body(req));
-      const row=await owned(user.id,input.id);if(!["lesson","roadmap"].includes(row.kind))throw new AppError(400,"resource_type","Choose a lesson or roadmap.");
+      await transaction(async db=>{
+      // Lock the resource to serialize this write with deletion on PostgreSQL.
+      const [row]=await db.query("UPDATE resources SET updated_at=updated_at WHERE id=? AND user_id=? RETURNING kind,body",[input.id,user.id]);
+      if(!row)throw new AppError(404,"not_found","Resource not found.");
+      if(!["lesson","roadmap"].includes(row.kind))throw new AppError(400,"resource_type","Choose a lesson or roadmap.");
       if(row.kind==="roadmap"&&(input.stage===undefined||input.stage>=JSON.parse(row.body).stages.length))throw new AppError(400,"stage","Choose a valid stage.");
       if(row.kind==="lesson"&&input.stage!==undefined)throw new AppError(400,"stage","Lessons do not have roadmap stages.");
       const target=input.id+(input.stage!==undefined?`:${input.stage}`:"");
-      if(input.completed)await query("INSERT INTO progress(user_id,target,completed_at) VALUES(?,?,?) ON CONFLICT(user_id,target) DO NOTHING",[user.id,target,now()]);else await query("DELETE FROM progress WHERE user_id=? AND target=?",[user.id,target]);return json({ok:true});
+      if(input.completed)await db.query("INSERT INTO progress(user_id,target,completed_at) VALUES(?,?,?) ON CONFLICT(user_id,target) DO NOTHING",[user.id,target,now()]);
+      else await db.query("DELETE FROM progress WHERE user_id=? AND target=?",[user.id,target]);
+      });
+      return json({ok:true});
     }
     if(path==="bookmarks"&&method==="GET")return json(await query("SELECT r.id,r.kind,r.title FROM bookmarks b JOIN resources r ON r.id=b.resource_id AND r.user_id=b.user_id WHERE b.user_id=? ORDER BY b.created_at DESC LIMIT 100",[user.id]));
     if(path==="bookmarks"&&method==="POST") {const input=z.object({id:idSchema,saved:z.boolean()}).parse(await body(req));await owned(user.id,input.id);if(input.saved)await query("INSERT INTO bookmarks(user_id,resource_id,created_at) VALUES(?,?,?) ON CONFLICT(user_id,resource_id) DO NOTHING",[user.id,input.id,now()]);else await query("DELETE FROM bookmarks WHERE user_id=? AND resource_id=?",[user.id,input.id]);return json({ok:true});}
