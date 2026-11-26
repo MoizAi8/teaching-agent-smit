@@ -34,6 +34,8 @@ Wait for `SAVED` before live-provider checks or further implementation, as reque
 - Latest typecheck, 14 isolated tests and production build passed. The full requested regression matrix remains open.
 - Next required user step: configure Sensitive Production `GEMINI_API_KEY` and a dedicated free-tier PostgreSQL `DATABASE_URL` in the project's Vercel settings. No release deployment until persistent hosted database is configured. Continue broader tests/refinement and publish only accurate progress claims.
 - Release resume: verified the linked Vercel project had no production variables and opened its environment settings. The browser redirected to Vercel sign-in. No production credential values were read or displayed.
+- Published the verified local core to personal branch `codex/smit-2` at `9b4a7ea760530bc8d67b0a2658c222855a2b6c93`. Local checkpoint `checkpoint/smit-2-local-core` points there. The personal default branch still serves the previous release.
+- Added a hosted API smoke runner for synthetic sessions, PostgreSQL persistence, genuine Gemini inference, document retrieval, cross-user isolation, lesson progress, bookmarks, quiz scoring, roadmaps and support. Run it after deployment, alongside browser QA. It creates synthetic release records and uses seven Gemini requests.
 
 1. Verify live provider; finish safe server API, authentication, ownership, persistent conversations, quotas and failure handling.
 2. Implement structured lessons, objective assessment/scoring, roadmaps and progress; verify with isolated database tests.
