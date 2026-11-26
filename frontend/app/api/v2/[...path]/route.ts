@@ -4,6 +4,7 @@ import { query, transaction } from "@/server/db";
 import { currentUser, requireUser, register, passwordValid, passwordHash, createSession, sessionCookie, rateLimit, hash, COOKIE } from "@/server/auth";
 import { AppError, aiInput, text, scoreQuiz, quiz } from "@/server/contracts";
 import { owned, visibleResource, learn } from "@/server/learning";
+import { isGeminiConfigured } from "@/server/provider";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export const maxDuration=60;
@@ -25,7 +26,7 @@ async function handle(req:Request,ctx:{params:Promise<{path:string[]}>}) {
       const allowed=process.env.APP_ORIGIN||url.origin;
       if(req.headers.get("origin")!==allowed || req.headers.get("sec-fetch-site")==="cross-site") throw new AppError(403,"origin","Request origin is not allowed.");
     }
-    if(path==="health"&&method==="GET") { await query("SELECT version FROM migrations LIMIT 1"); return json({status:"ok",aiConfigured:Boolean(process.env.GEMINI_API_KEY),database:process.env.DATABASE_URL?"postgresql":"local-sqlite"}); }
+    if(path==="health"&&method==="GET") { await query("SELECT version FROM migrations LIMIT 1"); return json({status:"ok",aiConfigured:isGeminiConfigured(),database:process.env.DATABASE_URL?"postgresql":"local-sqlite"}); }
     if(path==="auth/me"&&method==="GET") return json({user:await currentUser(req)});
     if((path==="auth/register"||path==="auth/login")&&method==="POST") {
       await rateLimit("auth:global",200);

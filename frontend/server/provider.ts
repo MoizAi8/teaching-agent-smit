@@ -1,8 +1,12 @@
 import { AppError } from "./contracts";
 export type Turn={role:"user"|"assistant";content:string};
 export const modelName=()=>process.env.GEMINI_MODEL||"gemini-3.5-flash-lite";
+function configuredKey() {
+  return process.env.GEMINI_API_KEY?.trim() || process.env.Gemini_API_key?.trim();
+}
+export const isGeminiConfigured = () => Boolean(configuredKey());
 export async function generate(system:string,turns:Turn[],json=false) {
-  const key=process.env.GEMINI_API_KEY?.trim();
+  const key=configuredKey();
   if(!key) throw new AppError(503,"provider_configuration","AI is not configured. Please contact the project maintainer.");
   const model=modelName();
   if(!/^[a-z0-9.-]+$/.test(model)) throw new AppError(503,"provider_configuration","Invalid model configuration.");
