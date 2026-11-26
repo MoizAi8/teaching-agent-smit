@@ -2,7 +2,7 @@
 
 An independent AI-powered education portfolio, extending the original [Moldrivo Teaching Agent SMIT](https://github.com/moldrivo/Teaching-Agent-SMIT). No official SMIT or Saylani endorsement. Original contributor history is preserved; no new project license has been invented.
 
-**Status: local implementation checkpoint, not a verified hosted release.** See [release gates](docs/HOSTED_RELEASE.md) and [remaining work](docs/KNOWN_LIMITATIONS.md).
+**Live portfolio release.** [Open Teaching Agent SMIT](https://teaching-agent-smit-livid.vercel.app) · [Release evidence](docs/HOSTED_RELEASE.md) · [Remaining work](docs/KNOWN_LIMITATIONS.md).
 
 ## Current implementation
 
@@ -20,7 +20,7 @@ Checks: `npm run typecheck`, `npm test`, `npm run build`. Genuine bounded AI che
 
 14 isolated automated tests passed. Seven genuine model workflows passed structural/persistence/isolation checks; these are not a comprehensive AI quality evaluation. Browser registration, a fresh tutor answer and refresh persistence were verified locally. Dashboard layouts were inspected at six sizes. Production dependency audit reported zero findings. [Detailed results](docs/TEST_RESULTS.md).
 
-Hosted PostgreSQL and production secrets remain unconfigured; no working hosted URL is claimed. Full requested regression coverage, advanced workflows and all-screen accessibility/visual QA remain incomplete. [Deployment instructions](docs/DEPLOYMENT.md).
+Production smoke checks passed against Neon PostgreSQL with two synthetic accounts and seven genuine Gemini calls. Full regression coverage and all-screen accessibility and visual QA remain open. [Deployment instructions](docs/DEPLOYMENT.md).
 
 ## Documentation
 

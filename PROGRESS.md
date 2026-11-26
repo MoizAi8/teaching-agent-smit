@@ -21,6 +21,12 @@ Wait for `SAVED` before live-provider checks or further implementation, as reque
 
 ## Remaining milestones
 
+### Production release update
+
+- Deployed application commit `da18dd8e4d5cd022bfd6286701efc15dd1760a78` to https://teaching-agent-smit-livid.vercel.app with dedicated Neon Free PostgreSQL.
+- Production smoke passed with two synthetic accounts and seven live Gemini requests. The public browser checks covered topic search, support navigation, sign-in and 390 px landing width. Type checking, 14 isolated tests and the production build passed before deployment.
+- The findings and remaining coverage are recorded in docs/HOSTED_RELEASE.md.
+
 ### 2026-11-26 implementation update
 
 - User confirmed `SAVED`. Gemini discovery and genuine beginner explanation passed with `gemini-3.5-flash-lite` (3,248 ms); local model setting updated. No key printed.
