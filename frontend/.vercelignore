@@ -1,0 +1,8 @@
+.env*
+.data
+out
+node_modules
+tests
+test-results
+*.log
+*.tsbuildinfo

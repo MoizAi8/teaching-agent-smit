@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Smit — Teaching Agent",
-  description: "Your analytical AI coding instructor: Socratic guidance, code reviews, and bug hunts.",
+  title: "Teaching Agent SMIT — Learn technology intelligently",
+  description: "Independent AI learning workspace for tutoring, programming, lessons, quizzes and personal roadmaps.",
 };
 
 export default function RootLayout({

@@ -1,9 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: "export",
   images: { unoptimized: true },
   trailingSlash: true,
+  serverExternalPackages: ["pg"],
+  outputFileTracingExcludes: { "/*": ["./.env*", "./.data/**/*", "./out/**/*", "./tests/**/*", "./scripts/**/*"] },
+  experimental: { cpus: 2 },
+  async headers() {
+    return [{ source: "/:path*", headers: [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+    ] }];
+  },
 };
 
 export default nextConfig;

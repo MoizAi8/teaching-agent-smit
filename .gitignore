@@ -18,6 +18,18 @@ next-env.d.ts
 # Env
 .env
 .env.local
+.env.*
+!.env.example
+*.sqlite
+*.sqlite3
+*.db-*
+.vercel/
+.data/
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+*.log
 
 # Editor / OS
 .vscode/

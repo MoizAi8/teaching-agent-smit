@@ -1,29 +1,40 @@
 {
   "name": "smit-teaching-agent-frontend",
-  "version": "0.1.0",
+  "version": "2.0.0",
+  "engines": {
+    "node": "24.x"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "ai:verify": "tsx scripts/verify-ai.ts"
   },
   "dependencies": {
-    "next": "^14.2.35",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "next": "^16.4.6",
+    "pg": "^8.16.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "react-markdown": "^9.0.1",
-    "react-syntax-highlighter": "^15.5.0",
-    "remark-gfm": "^4.0.0"
+    "react-syntax-highlighter": "^16.1.2",
+    "remark-gfm": "^4.0.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/node": "^24.19.4",
+    "@types/pg": "^8.15.5",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
     "@types/react-syntax-highlighter": "^15.5.13",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
+    "tsx": "^4.20.6",
     "typescript": "^5.5.4"
   }
 }
